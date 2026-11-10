@@ -74,8 +74,11 @@ public class PlayerController : MonoBehaviour
 
     void UpdateFacing()
     {
-        if (moveInput.x > 0.1f) transform.localScale = new Vector3(1, 1, 1);
-        else if (moveInput.x < -0.1f) transform.localScale = new Vector3(-1, 1, 1);
+        Vector3 scale = transform.localScale;
+        if (moveInput.x > 0.1f) scale.x = Mathf.Abs(scale.x);
+        else if (moveInput.x < -0.1f) scale.x = -Mathf.Abs(scale.x);
+        transform.localScale = scale;
+
     }
 
     // Input System callbacks (PlayerInput > Behavior: Send Messages)
