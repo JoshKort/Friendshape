@@ -690,9 +690,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2026024548}
-  - {fileID: 145740747}
-  - {fileID: 1887556698}
   - {fileID: 86097624}
+  - {fileID: 1887556698}
+  - {fileID: 145740747}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &357161657
@@ -716,7 +716,7 @@ MonoBehaviour:
     visual: {fileID: 1887556695}
     moveSpeed: 3
     jumpForce: 4
-  - shape: 0
+  - shape: 2
     visual: {fileID: 145740744}
     moveSpeed: 3
     jumpForce: 4
