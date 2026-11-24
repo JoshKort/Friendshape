@@ -16,6 +16,7 @@ public class CircleController : NetworkBehaviour
     [SerializeField] private float maxSpeed = 20f;
     [SerializeField] private float acceleration = 80f;
     [SerializeField] private float deceleration = 12f;
+    [SerializeField] private float slopeDeceleration = 3f; //lighter resistance on slopes so the ball can still roll down ramps
     [SerializeField] private float turnAcceleration = 180f;
     [SerializeField] private float airAcceleration = 30f;
     [SerializeField] float stopSpeed = 0.3f; //speed check for velocity haulting
@@ -44,7 +45,6 @@ public class CircleController : NetworkBehaviour
 
     private Rigidbody2D rb;
     private CircleCollider2D col;
-    private float worldRadius;
 
     private float moveInput;
     private bool jumpHeld;
@@ -66,7 +66,6 @@ public class CircleController : NetworkBehaviour
         col = GetComponent<CircleCollider2D>();
 
         maxJumpSpeed = Mathf.Max(maxJumpSpeed, minJumpSpeed);
-        worldRadius = col.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
 
         rb.mass = mass;
         rb.gravityScale = gravityScale;
@@ -141,7 +140,10 @@ public class CircleController : NetworkBehaviour
 
             if (onGround && changingDirection) movementAcceleration = turnAcceleration;
 
-            ApplySpeedChange(tangent, currentSpeed, targetSpeed, movementAcceleration);
+            //already above maxSpeed in the input direction (ramp launch, bounce): don't pull the speed back down
+            bool overspeed = Mathf.Abs(currentSpeed) > maxSpeed && Mathf.Sign(currentSpeed) == Mathf.Sign(targetSpeed);
+
+            if (!overspeed) ApplySpeedChange(tangent, currentSpeed, targetSpeed, movementAcceleration);
         }
         else if (onGround)
         {
@@ -193,7 +195,9 @@ public class CircleController : NetworkBehaviour
             return;
         }
 
-        ApplySpeedChange(tangent, currentSpeed, 0f, deceleration);
+        //slopes use the lighter resistance
+        float rate = flatGround ? deceleration : slopeDeceleration;
+        ApplySpeedChange(tangent, currentSpeed, 0f, rate);
     }
 
     private void ApplySpeedChange(Vector2 tangent, float currentSpeed, float targetSpeed, float accelerationRate)
